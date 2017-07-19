@@ -8,7 +8,7 @@ import './styles/styles.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import configureStore from './store/configureStore';
 
-// may populate store as required and passed into this call
+// may populate store when needed.
 const store = configureStore(); 
 
 render(

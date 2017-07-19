@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import * as courseActions from '../../actions/courseActions';
 
 class CoursesPage extends React.Component {
@@ -7,7 +8,7 @@ class CoursesPage extends React.Component {
     super(props, context);
 
     this.state = {
-      course: {title: null}
+      course: {title: ""}
     };
 
     this.onTitleChange = this.onTitleChange.bind(this);
@@ -21,8 +22,11 @@ class CoursesPage extends React.Component {
   }
 
   onClickSave() {
+    // dispatch is auto injected by connect() when MapDispatchToProps() is not passed in to connect()
+    // this.props.createCourse(this.state.course);
 
-    this.props.dispatch(courseActions.createCourse(this.state.course));
+    // after using bindActionCreators
+    this.props.actions.createCourse(this.state.course);
   }
 
   courseRow(course, index) {
@@ -46,16 +50,28 @@ class CoursesPage extends React.Component {
   }
 }
 
-function mapStateToProps(state, ownProps) {
-  
+// state => state in redux store, rather than the react raw state
+function mapStateToProps(state, ownProps) {  
   return {
     courses: state.courses
   };
 }
 
+function mapDispatchToProps(dispatch) {
+  return {
+    // createCourse: course => dispatch(courseActions.createCourse(course))
+
+    // all actions in courseActions are now bound to dispatch
+    actions: bindActionCreators(courseActions, dispatch)
+  };
+}
+
 CoursesPage.propTypes={
-  dispatch: PropTypes.func.isRequired,
-  courses: PropTypes.array.isRequired
+  // dispatch: PropTypes.func.isRequired, no longer needed once mapDispatchToProps is defined
+  courses: PropTypes.array.isRequired,
+  // createCourse: PropTypes.func.isRequired
+  actions: PropTypes.object.isRequired
+
 };
 
-export default connect(mapStateToProps)(CoursesPage);
+export default connect(mapStateToProps, mapDispatchToProps)(CoursesPage);
